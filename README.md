@@ -1,4 +1,4 @@
-# MyFinance – Project README and System Prompt
+# MyFinance – Cursor Agent–made app for finance and budgeting.
 
 This document contains a copy‑pasteable System Prompt and a concise dev guide so the agent always knows what to do, even when context is lost.
 
