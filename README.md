@@ -1,4 +1,4 @@
-# Finanzas App – Project README and System Prompt
+# MyFinance – Project README and System Prompt
 
 This document contains a copy‑pasteable System Prompt and a concise dev guide so the agent always knows what to do, even when context is lost.
 
