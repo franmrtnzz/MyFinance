@@ -54,15 +54,19 @@ function App() {
           <div className="space-y-6">
             {/* Quick Stats */}
             <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6">
-              <h1 className="text-2xl font-bold mb-4">Finanzas Personales</h1>
+              <h1 className="text-2xl font-bold mb-4">MyFinance</h1>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white/20 rounded-lg p-3">
                   <p className="text-sm opacity-90">Saldo del mes</p>
-                  <p className="text-xl font-bold">{currentSummary.balance.toFixed(2)}€</p>
+                  <p className="text-xl font-bold">
+                    {currentSummary.balance.toFixed(2)}€
+                  </p>
                 </div>
                 <div className="bg-white/20 rounded-lg p-3">
                   <p className="text-sm opacity-90">Transacciones</p>
-                  <p className="text-xl font-bold">{currentSummary.transactionCount}</p>
+                  <p className="text-xl font-bold">
+                    {currentSummary.transactionCount}
+                  </p>
                 </div>
               </div>
             </div>
