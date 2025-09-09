@@ -18,6 +18,7 @@ import { restoreAllFromCloud } from './lib/cloudSync';
 import { ImportPage } from './components/ImportPage';
 import { manualSeptember2025 } from './data/manual-sep-2025';
 import { replaceTransactionsInCloudForUser } from './lib/cloudSync';
+import { BUILD_VERSION } from './version';
 
 // Touch the React value to satisfy editors that require React in scope for JSX
 void React;
@@ -211,6 +212,7 @@ function App() {
         <div className="min-h-screen bg-gray-50">
           <div className="max-w-md mx-auto bg-white min-h-screen">
             <div className="p-4 pb-20">{renderContent()}</div>
+            <div className="text-center text-xs text-gray-400 pb-16">{BUILD_VERSION}</div>
             <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
           </div>
         </div>
