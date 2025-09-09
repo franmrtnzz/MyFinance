@@ -39,19 +39,24 @@ export const PortfolioPage: React.FC = () => {
   const [loanDate, setLoanDate] = useState<string>(() => new Date().toISOString().slice(0, 10));
   const [loanNotes, setLoanNotes] = useState('');
 
-  const canSave = asset.trim() && Number(price) > 0 && Number(quantity) !== 0 && date;
+  const parseNumber = (s: string): number => Number((s || '').toString().replace(',', '.'));
+
+  const canSave = asset.trim() && parseNumber(price) > 0 && parseNumber(quantity) !== 0 && date;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSave) return;
+    const parsedPrice = parseNumber(price);
+    const parsedQty = parseNumber(quantity);
+    if (!isFinite(parsedPrice) || !isFinite(parsedQty)) return;
     setSaving(true);
     try {
       await addTx({
         asset: asset.trim(),
         symbol: symbol.trim() || undefined,
         category,
-        price: Number(price),
-        quantity: Number(quantity),
+        price: parsedPrice,
+        quantity: parsedQty,
         date,
         notes: notes.trim() || undefined,
       } as any);
@@ -187,12 +192,12 @@ export const PortfolioPage: React.FC = () => {
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            if (!borrower.trim() || Number(principal) <= 0) return;
+            if (!borrower.trim() || parseNumber(principal) <= 0) return;
             try {
               await addLoan({
                 borrower: borrower.trim(),
-                principal: Number(principal),
-                annualRate: Number(annualRate || '0'),
+                principal: parseNumber(principal),
+                annualRate: parseNumber(annualRate || '0'),
                 startDate: loanDate,
                 notes: loanNotes.trim() || undefined,
               } as any);

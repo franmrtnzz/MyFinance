@@ -108,3 +108,40 @@ export async function restoreLoansFromCloud(deviceId: string): Promise<number> {
   // We cannot reconstruct loanId from borrower/startDate without a mapping; skip linking here.
   return loans.length;
 }
+
+export interface CloudTransactionInput {
+  date: string;
+  type: 'income' | 'expense';
+  description: string;
+  amount: number;
+  category?: string;
+}
+
+export async function replaceTransactionsInCloudForUser(
+  userId: string,
+  rows: CloudTransactionInput[],
+  fromDate: string,
+  toDate: string,
+): Promise<number> {
+  // Delete existing range
+  const del = await supabase
+    .from('transactions')
+    .delete()
+    .eq('user_id', userId)
+    .gte('date', fromDate)
+    .lte('date', toDate);
+  if (del.error) throw del.error;
+  if (rows.length === 0) return 0;
+  // Insert all
+  const payload = rows.map((r) => ({
+    user_id: userId,
+    date: r.date,
+    type: r.type,
+    description: r.description,
+    amount: r.amount,
+    category: r.category ?? null,
+  }));
+  const ins = await supabase.from('transactions').insert(payload);
+  if (ins.error) throw ins.error;
+  return payload.length;
+}

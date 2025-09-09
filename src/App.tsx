@@ -5,7 +5,6 @@ import { MonthlyDashboard } from './components/MonthlyDashboard';
 import { TransactionsList } from './components/TransactionsList';
 import { NotesPage } from './components/NotesPage';
 import { AnalyticsPage } from './components/AnalyticsPage';
-import { PortfolioPage } from './components/PortfolioPage';
 import { Navigation } from './components/Navigation';
 import { SettingsPage } from './components/SettingsPage';
 import { useTransactions } from './hooks/useTransactions';
@@ -16,13 +15,16 @@ import { useEffect } from 'react';
 import { db } from './database/db';
 import { getDeviceId } from './lib/device';
 import { restoreAllFromCloud } from './lib/cloudSync';
+import { ImportPage } from './components/ImportPage';
+import { manualSeptember2025 } from './data/manual-sep-2025';
+import { replaceTransactionsInCloudForUser } from './lib/cloudSync';
 
 // Touch the React value to satisfy editors that require React in scope for JSX
 void React;
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
-  const { getCurrentMonthSummary } = useTransactions();
+  const { getCurrentMonthSummary, addTransaction } = useTransactions();
   useEffect(() => {
     (async () => {
       const counts = await Promise.all([
@@ -38,6 +40,55 @@ function App() {
         } catch (e) {
           console.warn('Restore from cloud failed (ignored):', e);
         }
+      }
+    })();
+  }, []);
+
+  // One-time manual import for September 2025 based on user-provided screenshots
+  useEffect(() => {
+    (async () => {
+      const guardKey = 'manual_import_sep_2025_done';
+      if (localStorage.getItem(guardKey) === '1') return;
+      try {
+        const existing = await db.transactions
+          .where('date')
+          .between('2025-09-01', '2025-09-30', true, true)
+          .count();
+        // Avoid flooding if already has many entries
+        if (existing >= manualSeptember2025.length / 2) {
+          localStorage.setItem(guardKey, '1');
+          return;
+        }
+        for (const t of manualSeptember2025) {
+          await addTransaction(t);
+        }
+        localStorage.setItem(guardKey, '1');
+        console.log('Manual September 2025 data imported');
+      } catch (e) {
+        console.warn('Manual import failed (ignored):', e);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Dev-only: push manual September data to a specific Supabase user_id once
+  useEffect(() => {
+    (async () => {
+      const guardKey = 'manual_push_sep_2025_user13a5_done';
+      if (localStorage.getItem(guardKey) === '1') return;
+      if (import.meta.env.PROD) return; // avoid in prod builds
+      try {
+        const userId = '13a59b48-dc39-a9ed-0b81-b9bc776cfdbd';
+        await replaceTransactionsInCloudForUser(
+          userId,
+          manualSeptember2025,
+          '2025-09-01',
+          '2025-09-30',
+        );
+        localStorage.setItem(guardKey, '1');
+        console.log('Pushed manual September 2025 to Supabase for user', userId);
+      } catch (e) {
+        console.warn('Cloud push failed (ignored):', e);
       }
     })();
   }, []);
@@ -135,10 +186,10 @@ function App() {
           </div>
         );
 
-      case 'portfolio':
+      case 'import':
         return (
           <div className="space-y-6">
-            <PortfolioPage />
+            <ImportPage />
           </div>
         );
 
