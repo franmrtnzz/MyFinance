@@ -7,7 +7,6 @@ import {
   List,
   StickyNote,
   LineChart,
-  Upload,
 } from 'lucide-react';
 
 interface NavigationProps {
@@ -23,7 +22,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }
     { id: 'notes', label: 'Notas', icon: StickyNote },
     { id: 'analytics', label: 'Analíticas', icon: LineChart },
     { id: 'dashboard', label: 'Resumen', icon: BarChart3 },
-    { id: 'import', label: 'Importar', icon: Upload },
     { id: 'settings', label: 'Config', icon: Settings },
   ];
 

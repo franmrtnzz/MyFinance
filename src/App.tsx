@@ -15,7 +15,6 @@ import { useEffect } from 'react';
 import { db } from './database/db';
 import { getDeviceId } from './lib/device';
 import { restoreAllFromCloud } from './lib/cloudSync';
-import { ImportPage } from './components/ImportPage';
 import { manualSeptember2025 } from './data/manual-sep-2025';
 import { replaceTransactionsInCloudForUser } from './lib/cloudSync';
 import { BUILD_VERSION } from './version';
@@ -184,13 +183,6 @@ function App() {
         return (
           <div className="space-y-6">
             <AnalyticsPage />
-          </div>
-        );
-
-      case 'import':
-        return (
-          <div className="space-y-6">
-            <ImportPage />
           </div>
         );
 
